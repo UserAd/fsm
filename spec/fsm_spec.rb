@@ -59,6 +59,7 @@ describe FSM do
 
   it "Creates dot graph" do
     fsm = FSM.new(:initial_state).tap do |fsm|
+      fsm.when :star, :* => :starred
       fsm.when :event1, initial_state: :second_state
       fsm.when :event2, second_state: :third_state
     end

@@ -43,21 +43,18 @@ class FSM
   end
 
   def to_dot
-    dot_states = []
-    transitions_for.each do |event, states|
-      states.each do |src, dst|
-        dot_states << "#{src.to_s} -> #{dst.to_s} [label=\"#{event}\"];" unless src.to_s == "*"
+    dot_states = transitions_for.collect do |event, states|
+      states.collect do |src, dst|
+        "#{src.to_s} -> #{dst.to_s} [label=\"#{event}\"];"
       end
-    end
+    end.flatten
 
-    result = <<-END
-    digraph finite_state_machine {
-      node [shape = circle];
-      #{dot_states.join("\n")}
-    }
+<<-END
+digraph finite_state_machine {
+  node [shape = circle];
+  #{dot_states.join("\n")}
+}
     END
-
-    result
   end
 
   private

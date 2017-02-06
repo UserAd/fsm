@@ -57,4 +57,13 @@ describe FSM do
     expect(new_state).to eq(:tested)
   end
 
+  it "Creates dot graph" do
+    fsm = FSM.new(:initial_state).tap do |fsm|
+      fsm.when :event1, initial_state: :second_state
+      fsm.when :event2, second_state: :third_state
+    end
+
+    expect(fsm.to_dot).to eq("digraph finite_state_machine {\n  node [shape = circle];\n  initial_state -> second_state [label=\"event1\"];\nsecond_state -> third_state [label=\"event2\"];\n}\n")
+  end
+
 end

@@ -22,8 +22,8 @@ class FSM
     transitions_for[event].merge!(transitions)
   end
 
-  def trigger(event)
-    trigger?(event) && change(event)
+  def trigger(event, *args)
+    trigger?(event) && change(event, args)
   end
 
   def trigger!(event)
@@ -64,14 +64,14 @@ digraph finite_state_machine {
   end
 
 
-  def change(event)
+  def change(event, args)
     old_state = @state
     @state = :* if transitions_for[event].has_key?(:*)
     @state = transitions_for[event][@state]
 
     return false if old_state == @state
 
-    emitter.emit(@state.to_s, event, @state)
+    emitter.emit(@state.to_s, event, *args)
     emitter.emit(:state_changed, event, {from: old_state, to: @state})
 
     true

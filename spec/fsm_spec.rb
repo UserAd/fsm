@@ -67,4 +67,35 @@ describe FSM do
     expect(fsm.to_dot).to eq("digraph finite_state_machine {\n  node [shape = circle];\n  initial_state -> second_state [label=\"event1\"];\nsecond_state -> third_state [label=\"event2\"];\n}\n")
   end
 
+  it 'support additional args to trigger' do
+    value = 10
+    new_value = nil
+
+    @machine.on :confirmed do |state, argument|
+      new_value = argument
+    end
+
+    @machine.trigger :confirm, value
+
+    expect(new_value).to eq(10)
+  end
+
+  it 'support multiple args to trigger' do
+    values = nil
+
+    @machine.on :confirmed do |state, arg1, arg2, arg3|
+      values = [arg1, arg2, arg3]
+    end
+
+    @machine.trigger :confirm, 1, :abc, 'foo bar'
+
+    expect(values).to eq([1, :abc, 'foo bar'])
+  end
+
+  it 'support when hook ignore additional args' do
+    @machine.on :confirmed do |_|
+    end
+
+    expect { @machine.trigger(:confirm, 'foobar') }.not_to raise_error
+  end
 end
